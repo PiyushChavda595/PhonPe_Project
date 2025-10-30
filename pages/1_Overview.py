@@ -9,7 +9,7 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 from ydata_profiling import ProfileReport # Import for profiling
 
 # --- Page Config ---
-st.set_page_config(page_title='PhonePe Pulse | Overview', layout='wide', page_icon='C:/Users/a2z/Desktop/Internship/PhonePe_Project/Logo.png')
+st.set_page_config(page_title='PhonePe Pulse | Overview', layout='wide', page_icon='Logo.png')
 
 # --- NEW DB Credentials (using Streamlit Secrets) ---
 DB_HOST = st.secrets["database"]["host"]
