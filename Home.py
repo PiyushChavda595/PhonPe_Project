@@ -12,7 +12,7 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 st.set_page_config(
     page_title='PhonePe Pulse | Home',
     layout='wide',
-    page_icon='C:/Users/a2z/Desktop/Internship/PhonePe_Project/Logo.png' # Using an emoji
+    page_icon='Logo.png' # Using an emoji
 )
 
 # --- Hide Streamlit elements ---
