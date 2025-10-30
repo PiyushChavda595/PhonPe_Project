@@ -7,7 +7,7 @@ import altair as alt # Use Altair for bar charts like reference
 from streamlit_extras.add_vertical_space import add_vertical_space
 
 # --- Page Config ---
-st.set_page_config(page_title='PhonePe Pulse | Trends', layout='wide', page_icon='C:/Users/a2z/Desktop/Internship/PhonePe_Project/Logo.png')
+st.set_page_config(page_title='PhonePe Pulse | Trends', layout='wide', page_icon='Logo.png')
 
 # --- NEW DB Credentials (using Streamlit Secrets) ---
 DB_HOST = st.secrets["database"]["host"]
