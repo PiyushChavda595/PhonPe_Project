@@ -19,6 +19,9 @@ lib64/
 parts/
 sdist/
 var/
+
+
+.streamlit/secrets.toml
 wheels/
 share/python-wheels/
 *.egg-info/
