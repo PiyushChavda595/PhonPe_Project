@@ -1,0 +1,26 @@
+/* style.css */
+/* This styles the .kpi-card class */
+.kpi-card {
+    background-color: #f4f0f8; /* Light lavender background */
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px 0;
+    text-align: center;
+    border: 1px solid #dcd0f0; /* Light purple border */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+.kpi-card h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #483D8B; /* Dark slate blue/purple */
+}
+.kpi-card p {
+    margin: 10px 0 0 0;
+    font-size: 32px;
+    font-weight: bold;
+    color: #6A0DAD; /* Strong purple */
+}
+.kpi-card span {
+    font-size: 16px;
+    color: #28a745; /* Delta color remains green as it's functional */
+}

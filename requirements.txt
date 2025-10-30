@@ -1,0 +1,14 @@
+streamlit>=1.30 
+pandas>=1.5 
+mysql-connector-python
+plotly>=5.0
+requests
+gitpython
+streamlit-player
+streamlit-extras
+xlsxwriter
+altair>=5.0
+seaborn>=0.12
+matplotlib
+numpy<2.0 
+ydata-profiling[visions] 
