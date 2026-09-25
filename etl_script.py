@@ -4,23 +4,18 @@ import git
 import json
 import pandas as pd
 import mysql.connector
+import streamlit as st
+
 
 # --- Database Credentials ---
 # --- Database Credentials ---
-DB_HOST = os.getenv(
-    "DB_HOST",
-    "mysql-51b6b7b-phonepeintershipproject.a.aivencloud.com"
-)
 
-DB_PORT = int(os.getenv("DB_PORT", "28931"))
-
-DB_USER = os.getenv("DB_USER", "avnadmin")
-
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-
-DB_NAME = os.getenv("DB_NAME", "phonepe_pulse")
-
-DB_SSL_CA = os.getenv("DB_SSL_CA", "ca.pem")
+DB_HOST = st.secrets["database"]["host"]
+DB_PORT = int(st.secrets["database"]["port"])
+DB_USER = st.secrets["database"]["user"]
+DB_PASSWORD = st.secrets["database"]["password"]
+DB_NAME = st.secrets["database"]["db_name"]
+DB_SSL_CA = st.secrets["database"]["ssl_ca"]
 
 # --- GitHub Repository ---
 REPO_URL = "https://github.com/PhonePe/pulse.git"
@@ -66,7 +61,9 @@ def create_database_and_tables():
         conn.commit()
         print("Tables checked/created successfully.")
     except mysql.connector.Error as err:
-        print(f"Database Error during setup: {err}")
+        raise RuntimeError(
+            f"Database setup failed: {err}"
+        ) from err
     finally:
         if cursor:
             cursor.close()
