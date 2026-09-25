@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 import mysql.connector
 import os
+from etl_script import run_etl
 from streamlit_player import st_player
 # style_metric_cards is not needed if style.css is handling it
 from streamlit_extras.add_vertical_space import add_vertical_space
@@ -35,6 +36,120 @@ DB_USER = st.secrets["database"]["user"]
 DB_PASSWORD = st.secrets["database"]["password"]
 DB_NAME = st.secrets["database"]["db_name"]
 DB_SSL_CA = st.secrets["database"]["ssl_ca"]  # Added SSL CA file
+
+
+
+# --- Database Initialization ---
+
+REQUIRED_TABLES = [
+    "aggregated_transaction",
+    "aggregated_user",
+    "aggregated_insurance",
+    "map_transaction",
+    "map_user",
+    "map_insurance",
+    "top_transaction",
+    "top_user",
+    "top_insurance"
+]
+
+
+def database_is_ready():
+    """Check whether all required tables exist and contain data."""
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = mysql.connector.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            database=DB_NAME,
+            ssl_ca=DB_SSL_CA,
+            ssl_verify_cert=True
+        )
+
+        cursor = conn.cursor()
+
+        for table in REQUIRED_TABLES:
+
+            # Check whether table exists
+            cursor.execute(
+                """
+                SELECT COUNT(*)
+                FROM information_schema.tables
+                WHERE table_schema = %s
+                AND table_name = %s
+                """,
+                (DB_NAME, table)
+            )
+
+            exists = cursor.fetchone()[0]
+
+            if exists == 0:
+                return False
+
+            # Check whether table contains data
+            cursor.execute(
+                f"SELECT COUNT(*) FROM `{table}`"
+            )
+
+            row_count = cursor.fetchone()[0]
+
+            if row_count == 0:
+                return False
+
+        return True
+
+    except mysql.connector.Error:
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+
+        if conn and conn.is_connected():
+            conn.close()
+
+
+# --- Automatically Initialize Database ---
+
+if not database_is_ready():
+
+    st.warning(
+        "PhonePe Pulse database is not initialized yet. "
+        "Initializing the database for the first time..."
+    )
+
+    with st.spinner(
+        "Setting up database and importing PhonePe Pulse data. "
+        "This may take several minutes..."
+    ):
+
+        try:
+            run_etl()
+
+            st.success(
+                "Database initialization completed successfully!"
+            )
+
+            # Clear cached database queries
+            st.cache_data.clear()
+
+            # Reload the application
+            st.rerun()
+
+        except Exception as e:
+
+            st.error(
+                "Database initialization failed."
+            )
+
+            st.exception(e)
+
+            st.stop()
 
 # --- DB Fetch Function ---
 @st.cache_data(ttl=3600) # Cache data for 1 hour
