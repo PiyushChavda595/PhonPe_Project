@@ -6,10 +6,21 @@ import pandas as pd
 import mysql.connector
 
 # --- Database Credentials ---
-DB_HOST = "localhost"
-DB_USER = "root"
-DB_PASSWORD = "admin" # Using "admin" as requested
-DB_NAME = "phonepe_pulse"
+# --- Database Credentials ---
+DB_HOST = os.getenv(
+    "DB_HOST",
+    "mysql-51b6b7b-phonepeintershipproject.a.aivencloud.com"
+)
+
+DB_PORT = int(os.getenv("DB_PORT", "28931"))
+
+DB_USER = os.getenv("DB_USER", "avnadmin")
+
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+DB_NAME = os.getenv("DB_NAME", "phonepe_pulse")
+
+DB_SSL_CA = os.getenv("DB_SSL_CA", "ca.pem")
 
 # --- GitHub Repository ---
 REPO_URL = "https://github.com/PhonePe/pulse.git"
@@ -33,7 +44,7 @@ def create_database_and_tables():
     conn = None # Initialize conn to None
     cursor = None # Initialize cursor to None
     try:
-        conn = mysql.connector.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD)
+        conn = mysql.connector.connect(host=DB_HOST,port=DB_PORT,user=DB_USER,password=DB_PASSWORD,ssl_ca=DB_SSL_CA,ssl_verify_cert=True)
         cursor = conn.cursor()
         print("MySQL connection established.")
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
