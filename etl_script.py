@@ -88,7 +88,7 @@ def insert_data_into_db(df, table_name):
     conn = None # Initialize conn to None
     cursor = None # Initialize cursor to None
     try:
-        conn = mysql.connector.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME)
+        conn = mysql.connector.connect(host=DB_HOST,port=DB_PORT,user=DB_USER,password=DB_PASSWORD,ssl_ca=DB_SSL_CA,ssl_verify_cert=True)
         cursor = conn.cursor()
 
         # Check if table has data (simple check)
