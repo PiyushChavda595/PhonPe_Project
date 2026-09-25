@@ -433,11 +433,21 @@ def process_top_insurance():
     return pd.DataFrame(data_list)
 
 
-if __name__ == "__main__":
+def run_etl():
+    """
+    Run the complete PhonePe Pulse ETL process.
+    This can be called directly from Streamlit.
+    """
+
+    print("Starting PhonePe Pulse ETL...")
+
+    # 1. Clone PhonePe Pulse repository
     clone_data_repo()
+
+    # 2. Create database and all required tables
     create_database_and_tables()
 
-    # --- Define all processing functions and target tables ---
+    # 3. Define processing functions and target tables
     processing_map = {
         process_aggregated_transaction: "aggregated_transaction",
         process_aggregated_user: "aggregated_user",
@@ -450,19 +460,38 @@ if __name__ == "__main__":
         process_top_insurance: "top_insurance"
     }
 
-    # Process and insert data if repo exists
-    if os.path.exists(REPO_DIR):
-        for process_func, table_name in processing_map.items():
-            print(f"Processing data for {table_name}...")
-            try:
-                df = process_func()
-                if not df.empty:
-                    insert_data_into_db(df, table_name)
-                else:
-                    print(f"No data generated for {table_name}.")
-            except Exception as e:
-                print(f"Error during processing/insertion for {table_name}: {e}")
-    else:
-        print(f"Error: Data repository '{REPO_DIR}' not found. Cannot process data.")
+    # 4. Process and insert data
+    if not os.path.exists(REPO_DIR):
+        raise RuntimeError(
+            f"Data repository '{REPO_DIR}' was not found."
+        )
 
-    print("\nETL process finished.")
+    for process_func, table_name in processing_map.items():
+
+        print(f"Processing data for {table_name}...")
+
+        try:
+            df = process_func()
+
+            if not df.empty:
+                insert_data_into_db(df, table_name)
+                print(
+                    f"{table_name}: "
+                    f"{len(df)} records processed."
+                )
+            else:
+                print(
+                    f"No data generated for {table_name}."
+                )
+
+        except Exception as e:
+            raise RuntimeError(
+                f"Error during processing/insertion "
+                f"for {table_name}: {e}"
+            ) from e
+
+    print("PhonePe Pulse ETL completed successfully.")
+
+
+if __name__ == "__main__":
+    run_etl()
